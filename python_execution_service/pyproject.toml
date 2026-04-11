@@ -1,0 +1,28 @@
+[project]
+name = "python-execution-service"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv",
+    "snowflake-connector-python[secure-local-storage]",
+    "snowflake-snowpark-python",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "websockets",
+    "pywinpty",
+    "langgraph",
+    "openai",
+    "jsonpatch>=1.33",
+    "langgraph-checkpoint-sqlite>=3.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
