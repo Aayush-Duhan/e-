@@ -1,5 +1,4 @@
 const baseUrl = process.env.PYTHON_EXECUTION_URL ?? "http://127.0.0.1:8090";
-const executionToken = process.env.EXECUTION_TOKEN ?? "local-dev-token";
 
 type RequestOptions = {
   method?: string;
@@ -12,7 +11,6 @@ async function request(path: string, options: RequestOptions = {}) {
     method: options.method ?? "GET",
     headers: {
       "Content-Type": "application/json",
-      "X-Execution-Token": executionToken,
       ...(options.headers ?? {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
@@ -87,9 +85,6 @@ export async function resumePythonRun(payload: {
 
   return fetch(`${baseUrl}/v1/runs/${payload.runId}/resume`, {
     method: "POST",
-    headers: {
-      "X-Execution-Token": executionToken,
-    },
     body: formData,
     cache: "no-store",
   });
@@ -100,9 +95,7 @@ export async function sendChatMessage(runId: string, message: string) {
 }
 
 export async function getPythonRunEvents(runId: string, lastEventId?: string | null, lastEventIndex?: string | null) {
-  const headers: Record<string, string> = {
-    "X-Execution-Token": executionToken,
-  };
+  const headers: Record<string, string> = {};
   if (lastEventId && lastEventId.trim().length > 0) {
     headers["Last-Event-ID"] = lastEventId;
   }

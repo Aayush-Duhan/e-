@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from python_execution_service.app.api.routes.runs import register_routes
+from python_execution_service.app.api.routes import register_routes
 from python_execution_service.domain.runs.service import load_persisted_runs
 from python_execution_service.infrastructure.persistence.sqlite import store as sqlite_store
 

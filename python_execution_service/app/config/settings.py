@@ -9,7 +9,6 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[2]
 _ENV_FILE = PACKAGE_ROOT / ".env"
 load_dotenv(_ENV_FILE)
 
-EXECUTION_TOKEN = os.getenv("EXECUTION_TOKEN", "local-dev-token")
 OUTPUT_ROOT = Path(os.getenv("PYTHON_EXEC_OUTPUT_ROOT", "outputs")).resolve()
 OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 

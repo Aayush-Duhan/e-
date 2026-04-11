@@ -33,7 +33,6 @@ uvicorn python_execution_service.main:app --host 127.0.0.1 --port 8090
 Recommended environment variables:
 
 ```bash
-EXECUTION_TOKEN=local-dev-token
 PYTHON_EXECUTION_URL=http://127.0.0.1:8090
 ```
 

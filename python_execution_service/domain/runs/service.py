@@ -9,10 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import HTTPException
-
 from python_execution_service.infrastructure.persistence.sqlite import store as sqlite_store
-from python_execution_service.app.config.settings import EXECUTION_TOKEN
 from python_execution_service.domain.migration.constants import STEP_LABELS
 from python_execution_service.domain.runs.state import (
     CANCEL_FLAGS,
@@ -75,13 +72,6 @@ def load_persisted_runs() -> None:
                 RunStore.update_run_status(run.runId, "failed", error="service_restarted", updated_at=now)
             RUNS[run.runId] = run
             CANCEL_FLAGS[run.runId] = threading.Event()
-
-
-# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-def require_auth(x_execution_token: str | None) -> None:
-    if x_execution_token != EXECUTION_TOKEN:
-        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 # â”€â”€ Event / message / log helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
