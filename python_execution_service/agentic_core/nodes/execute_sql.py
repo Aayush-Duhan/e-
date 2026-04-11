@@ -65,8 +65,9 @@ def apply_uploaded_ddl_and_resume(state: MigrationContext) -> MigrationContext:
 
 def _write_execution_log_file(state: MigrationContext, sql_files: List[str]) -> None:
     """Write a .txt file capturing the Snowflake environment and SQL statements for the latest execution."""
-    from python_execution_service.config import OUTPUT_ROOT, RUNS, RUN_LOCK
-    from python_execution_service.sqlite_store import RunStore
+    from python_execution_service.app.config.settings import OUTPUT_ROOT
+    from python_execution_service.domain.runs.state import RUN_LOCK, RUNS
+    from python_execution_service.infrastructure.persistence.sqlite.store import RunStore
 
     log_dir = None
     if state.session_id:

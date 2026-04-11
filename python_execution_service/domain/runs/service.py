@@ -1,4 +1,4 @@
-"""Utility / helper functions: serialization, logging, auth, run-record management."""
+﻿"""Run lifecycle helpers, persistence sync, and event utilities."""
 
 import json
 import logging
@@ -11,29 +11,28 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from python_execution_service import sqlite_store
-from python_execution_service.config import (
+from python_execution_service.infrastructure.persistence.sqlite import store as sqlite_store
+from python_execution_service.app.config.settings import EXECUTION_TOKEN
+from python_execution_service.domain.migration.constants import STEP_LABELS
+from python_execution_service.domain.runs.state import (
     CANCEL_FLAGS,
-    EXECUTION_TOKEN,
     RUN_LOCK,
     RUNS,
-    STEP_LABELS,
-    THINKING_STEP_IDS,
     USER_MESSAGE_QUEUES,
 )
-from python_execution_service.models import RunRecord, RunStep, StartRunRequest
-from python_execution_service.sqlite_store import RunStore
+from python_execution_service.shared.models.runs import RunRecord, RunStep, StartRunRequest
+from python_execution_service.infrastructure.persistence.sqlite.store import RunStore
 
 logger = logging.getLogger(__name__)
 
 
-# ── Time helpers ────────────────────────────────────────────────
+# â”€â”€ Time helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def now_iso() -> str:
     return datetime.utcnow().isoformat()
 
 
-# ── Serialization / deserialization ─────────────────────────────
+# â”€â”€ Serialization / deserialization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _serialize_run_record(run: RunRecord) -> dict[str, Any]:
     return run.model_dump()
@@ -43,7 +42,7 @@ def _deserialize_run_record(payload: dict[str, Any]) -> RunRecord:
     return RunRecord.model_validate(payload)
 
 
-# ── Persistence ─────────────────────────────────────────────────
+# â”€â”€ Persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def persist_run(run: RunRecord) -> None:
     """Persist a single run snapshot to SQLite."""
@@ -78,14 +77,14 @@ def load_persisted_runs() -> None:
             CANCEL_FLAGS[run.runId] = threading.Event()
 
 
-# ── Auth ────────────────────────────────────────────────────────
+# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def require_auth(x_execution_token: str | None) -> None:
     if x_execution_token != EXECUTION_TOKEN:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-# ── Event / message / log helpers ───────────────────────────────
+# â”€â”€ Event / message / log helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def append_event(run: RunRecord, event_type: str, payload: dict[str, Any]) -> None:
     event = {"type": event_type, "payload": payload, "timestamp": now_iso()}
@@ -131,7 +130,7 @@ def send_terminal_data(run: RunRecord, raw_chunk: str) -> None:
 
     Unlike ``append_terminal_output`` which sends parsed/cleaned lines,
     this streams the *exact* bytes from the PTY (including ANSI codes and
-    control characters) so xterm can render them natively — identical to
+    control characters) so xterm can render them natively â€” identical to
     bolt.new's WebSocket ``terminal.write(event.data)`` pattern.
     """
     cleaned = raw_chunk.replace("\x00", "")
@@ -149,7 +148,7 @@ def _clean_terminal_output(message: str) -> str:
     lines: list[str] = []
     for raw_line in ansi_stripped.splitlines():
         line = raw_line
-        line = re.sub(r"[¿´³]", " ", line)
+        line = re.sub(r"[Â¿Â´Â³]", " ", line)
         line = re.sub(r"[\u2500-\u257f\u2580-\u259f]", " ", line)
         line = re.sub(r"[\u00c0-\u00ff]", " ", line)
         line = re.sub(r"[=]{3,}", " ", line)
@@ -321,7 +320,7 @@ def ensure_not_canceled(run_id: str) -> None:
         raise RuntimeError("Run canceled")
 
 
-# ── Run-record factory helpers ──────────────────────────────────
+# â”€â”€ Run-record factory helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _sanitize_upload_filename(name: str) -> str:
     base = Path(name or "uploaded.ddl.sql").name
@@ -348,7 +347,7 @@ def _request_from_run(existing: RunRecord) -> StartRunRequest:
     )
 
 
-# ── User message queue helpers ──────────────────────────────────
+# â”€â”€ User message queue helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def push_user_message(run_id: str, message: str) -> None:
     """Queue a user message for the running agent to pick up."""
@@ -372,3 +371,4 @@ def pop_user_message(run_id: str) -> str | None:
                 run.userMessageQueue.pop(0)
             return msg
     return None
+

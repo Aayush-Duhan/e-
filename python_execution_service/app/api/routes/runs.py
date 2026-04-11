@@ -1,4 +1,4 @@
-"""FastAPI route handlers."""
+﻿"""FastAPI route handlers for runs and terminal streaming."""
 
 import asyncio
 import json
@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 from fastapi import File, Form, Header, HTTPException, Query, UploadFile, WebSocket, WebSocketDisconnect
 
-from python_execution_service.config import (
+from python_execution_service.app.config.settings import OUTPUT_ROOT
+from python_execution_service.domain.runs.state import (
     CANCEL_FLAGS,
-    OUTPUT_ROOT,
     PROJECT_LOCKS,
     RUN_LOCK,
     RUNS,
 )
-from python_execution_service.helpers import (
+from python_execution_service.domain.runs.service import (
     _request_from_run,
     _sanitize_upload_filename,
     append_chat_message,
@@ -30,17 +30,17 @@ from python_execution_service.helpers import (
     push_user_message,
     require_auth,
 )
-from python_execution_service.models import (
+from python_execution_service.shared.models.runs import (
     ResumeRunConfig,
     RunRecord,
     StartRunRequest,
     StartRunResponse,
 )
-from python_execution_service.sqlite_store import RunStore
-from python_execution_service.workflow import execute_run_sync
+from python_execution_service.infrastructure.persistence.sqlite.store import RunStore
+from python_execution_service.domain.migration.workflow import execute_run_sync
 
 
-# ── Internal helpers ────────────────────────────────────────────
+# â”€â”€ Internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _start_run_record(
     request: StartRunRequest,
@@ -124,7 +124,7 @@ def _start_run_worker(run_id: str, *, is_follow_up_chat: bool = False) -> None:
     worker.start()
 
 
-# ── Route registration ─────────────────────────────────────────
+# â”€â”€ Route registration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def register_routes(app) -> None:
     """Attach all route handlers to the given FastAPI application."""
@@ -342,7 +342,7 @@ def register_routes(app) -> None:
 
         return StreamingResponse(iterator(), media_type="text/event-stream")
 
-    # ── Terminal WebSocket (per-run isolation) ────────────────────
+    # â”€â”€ Terminal WebSocket (per-run isolation) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     @app.websocket("/ws/terminal/agent/{run_id}")
     async def ws_agent_terminal(websocket: WebSocket, run_id: str) -> None:
         """Stream raw PTY output for a specific run to the frontend terminal.
@@ -350,7 +350,7 @@ def register_routes(app) -> None:
         Each WebSocket connection subscribes to a single run's channel,
         so concurrent runs do not leak terminal output to each other.
         """
-        from python_execution_service import terminal_bridge
+        from python_execution_service.infrastructure.runtime import terminal_bridge
 
         with RUN_LOCK:
             if run_id not in RUNS:
@@ -389,73 +389,5 @@ def register_routes(app) -> None:
             reader_task.cancel()
             terminal_bridge.unsubscribe(run_id, q)
 
-    # ── Cortex CLI Terminal ───────────────────────────────────────
 
-    @app.post("/v1/cortex-terminal/spawn")
-    def spawn_cortex_terminal(
-        body: dict[str, Any] | None = None,
-    ) -> dict[str, str]:
-        """Spawn a new interactive Cortex CLI PTY session."""
-        from python_execution_service import cortex_pty
 
-        cols = 80
-        rows = 24
-        if body:
-            cols = int(body.get("cols", 80))
-            rows = int(body.get("rows", 24))
-
-        session_id = cortex_pty.spawn_session(cols=cols, rows=rows)
-        return {"sessionId": session_id}
-
-    @app.websocket("/ws/terminal/cortex/{session_id}")
-    async def ws_cortex_terminal(websocket: WebSocket, session_id: str) -> None:
-        """Bidirectional WebSocket for an interactive Cortex CLI PTY session.
-
-        Browser sends keystrokes → PTY stdin.
-        PTY stdout → browser via async queue.
-        Resize control messages are supported.
-        """
-        from python_execution_service import cortex_pty
-
-        session = cortex_pty.get_session(session_id)
-        if session is None:
-            await websocket.close(code=4004, reason="Session not found")
-            return
-
-        await websocket.accept()
-        q = session.subscribe()
-
-        async def _reader() -> None:
-            """Read from the PTY broadcast queue and send to WebSocket."""
-            try:
-                while True:
-                    data = await q.get()
-                    if data:
-                        await websocket.send_text(data)
-            except Exception:
-                pass
-
-        reader_task = asyncio.create_task(_reader())
-
-        try:
-            while True:
-                raw = await websocket.receive_text()
-                # Handle resize control messages
-                if raw.startswith("{"):
-                    try:
-                        msg = json.loads(raw)
-                        if msg.get("type") == "resize":
-                            session.resize(
-                                cols=int(msg.get("cols", 80)),
-                                rows=int(msg.get("rows", 24)),
-                            )
-                            continue
-                    except (ValueError, KeyError):
-                        pass
-                # Forward keystrokes to PTY stdin
-                session.write(raw)
-        except WebSocketDisconnect:
-            pass
-        finally:
-            reader_task.cancel()
-            session.unsubscribe(q)

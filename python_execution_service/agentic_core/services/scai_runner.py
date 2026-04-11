@@ -62,7 +62,7 @@ def run_scai_command_pty(
         # Broadcast raw chunk to WebSocket terminal clients for this run
         if run_id:
             try:
-                from python_execution_service import terminal_bridge
+                from python_execution_service.infrastructure.runtime import terminal_bridge
                 terminal_bridge.broadcast(run_id, chunk)
             except Exception:
                 pass

@@ -26,3 +26,8 @@ dev = [
 package = false
 
 [tool.uv.sources]
+
+[tool.pyrefly]
+python-interpreter-path = ".venv/Scripts/python.exe"
+search-path = ["."]
+project-includes = ["."]

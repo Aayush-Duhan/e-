@@ -44,7 +44,7 @@ from python_execution_service.agentic_core.agent.tools import (
     set_active_context,
     set_step_callback,
 )
-from python_execution_service.helpers import pop_user_message
+from python_execution_service.domain.runs.service import pop_user_message
 from python_execution_service.agentic_core.models.context import MigrationContext, MigrationState
 
 logger = logging.getLogger(__name__)

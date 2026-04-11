@@ -1,4 +1,4 @@
-"""LangGraph agent-driven workflow execution."""
+﻿"""LangGraph agent-driven migration execution."""
 
 import json
 import logging
@@ -14,14 +14,14 @@ from python_execution_service.agentic_core.agent.graph import (
 )
 from python_execution_service.agentic_core.agent.tools import get_active_context, set_active_context
 from python_execution_service.agentic_core.models.context import MigrationContext, MigrationState
-from python_execution_service.config import (
+from python_execution_service.domain.migration.constants import STEP_LABELS
+from python_execution_service.domain.runs.state import (
     AGENT_GRAPHS,
     PROJECT_LOCKS,
     RUN_LOCK,
     RUNS,
-    STEP_LABELS,
 )
-from python_execution_service.helpers import (
+from python_execution_service.domain.runs.service import (
     add_log,
     append_chat_message,
     append_event,
@@ -34,8 +34,8 @@ from python_execution_service.helpers import (
     set_run_status,
     update_step,
 )
-from python_execution_service.models import RunRecord
-from python_execution_service.sqlite_store import RunStore
+from python_execution_service.shared.models.runs import RunRecord
+from python_execution_service.infrastructure.persistence.sqlite.store import RunStore
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def execute_run_sync(run_id: str, *, is_follow_up_chat: bool = False) -> None:  
                 content="Migration started. The agent is analyzing the task...",
             )
 
-        # ── Sink callbacks ─────────────────────────────────────
+        # â”€â”€ Sink callbacks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         def activity_log_sink(entry: dict[str, Any]) -> None:
             formatted = format_activity_log_entry(entry)
@@ -162,7 +162,7 @@ def execute_run_sync(run_id: str, *, is_follow_up_chat: bool = False) -> None:  
             with _streamed_stmt_lock:
                 _streamed_stmt_count += 1
 
-        # ── Build migration context ───────────────────────────
+        # â”€â”€ Build migration context â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         if is_follow_up_chat:
             try:
@@ -229,7 +229,7 @@ def execute_run_sync(run_id: str, *, is_follow_up_chat: bool = False) -> None:  
                 f"Applying uploaded DDL ({Path(resume_ddl_path).name}) before resuming execute_sql.",
             )
 
-        # ── Agent callbacks ────────────────────────────────────
+        # â”€â”€ Agent callbacks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         def message_callback(role: str, kind: str, content: str) -> None:
             append_chat_message(run, role=role, kind=kind, content=content)
@@ -263,7 +263,7 @@ def execute_run_sync(run_id: str, *, is_follow_up_chat: bool = False) -> None:  
             with RUN_LOCK:
                 run.conversationHistory = history
 
-        # ── Build and run the LangGraph agent ──────────────────
+        # â”€â”€ Build and run the LangGraph agent â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         _perf_log(run, "AGENT_BUILD_START")
         checkpointer = create_checkpointer(_get_checkpointer_path(run))
@@ -299,7 +299,7 @@ def execute_run_sync(run_id: str, *, is_follow_up_chat: bool = False) -> None:  
 
         _perf_log(run, "AGENT_RUN_END")
 
-        # ── Process final state ────────────────────────────────
+        # â”€â”€ Process final state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         _finalize_run(run, run_id, is_follow_up_chat)
         _do_cleanup(agent_info, run, run_id, run_t0)
@@ -410,3 +410,4 @@ def _finalize_run(run: RunRecord, run_id: str, is_follow_up_chat: bool) -> None:
         reason = final_context.human_intervention_reason or "Migration stopped before completion"
         set_run_status(run, "awaiting_input", reason)
         append_event(run, "run:awaiting_input", {"runId": run_id, "reason": reason})
+

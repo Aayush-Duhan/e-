@@ -15,7 +15,10 @@ from typing import Any, Iterator
 
 from openai import OpenAI
 
-from python_execution_service.config import SNOWFLAKE_PAT, SNOWFLAKE_ACCOUNT_URL
+from python_execution_service.app.config.settings import (
+    SNOWFLAKE_ACCOUNT_URL,
+    SNOWFLAKE_PAT,
+)
 
 logger = logging.getLogger(__name__)
 

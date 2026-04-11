@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import sqlite3
 from collections.abc import Iterator
@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
+ROOT_DIR = Path(__file__).resolve().parents[4]
 DEFAULT_DB_PATH = ROOT_DIR / "data" / "app.db"
 SCHEMA_PATH = ROOT_DIR / "db" / "schema_v1.sql"
 
@@ -389,7 +389,7 @@ def list_runs() -> list[dict[str, Any]]:
     return result
 
 
-# ── RunStore: centralized DB-backed run access ──────────────────
+# â”€â”€ RunStore: centralized DB-backed run access â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # Column mapping: SQLite snake_case -> RunRecord camelCase
 _RUN_COLUMNS = (
@@ -511,7 +511,7 @@ class RunStore:
 
     @staticmethod
     def update_run_status(run_id: str, status: str, *, error: str | None = None, updated_at: str | None = None) -> None:
-        """Atomic status update — only touches the status, error, and updated_at columns."""
+        """Atomic status update â€” only touches the status, error, and updated_at columns."""
         ts = updated_at or _now_iso()
         with connect() as conn:
             conn.execute(
@@ -521,7 +521,7 @@ class RunStore:
 
     @staticmethod
     def update_run_fields(run_id: str, updated_at: str | None = None, **fields: Any) -> None:
-        """Partial field update — only writes the specified columns.
+        """Partial field update â€” only writes the specified columns.
 
         Accepts camelCase field names matching RunRecord (e.g. ``requiresDdlUpload``).
         Automatically maps to snake_case DB columns.
@@ -597,3 +597,4 @@ class RunStore:
                 ]
                 result.append(d)
             return result
+
