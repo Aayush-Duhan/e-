@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Snowflake, ArrowRight, ArrowLeft, Check, Zap, Shield, Code2 } from "lucide-react";
 import { Header } from "@/components/header";
@@ -55,126 +56,94 @@ export default function MigrationToolkitPage() {
               <div className="bg-noise pointer-events-none absolute inset-0 z-0 opacity-10" />
 
               {/* Content */}
-              <div className="relative z-10 flex w-full max-w-[900px] flex-col items-center text-center">
-                {/* Back to dashboard */}
+              <div className="relative z-10 flex w-full max-w-2xl flex-col px-4">
+                {/* Back link */}
                 <motion.div
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="mb-4 self-start"
+                  className="mb-4"
                 >
                   <Link
                     href="/"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/50 transition-all hover:border-white/20 hover:bg-white/[0.08] hover:text-white/80"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-white/40 transition-colors hover:text-white/70"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
-                    Dashboard
+                    Back to Dashboard
                   </Link>
                 </motion.div>
 
-                {/* Title */}
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
+                {/* Panel */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl"
+                  className="w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111318]"
                 >
-                  <span className="shimmer-text">Snowflake</span> Migration Hub
-                </motion.h1>
+                  {/* Hero area */}
+                  <div className="px-8 pt-10 pb-8">
+                    <div className="flex items-center gap-2.5 mb-5">
+                      <Image src="/Snowflake.svg" alt="Snowflake" width={20} height={20} className="h-5 w-5" />
+                      <span className="text-sm font-semibold text-[#29B5E8]">Snowflake Migration</span>
+                    </div>
+                    <h1 className="text-[2.5rem] font-extrabold leading-[1.1] tracking-tight text-white">
+                      Start a new<br />migration session
+                    </h1>
+                    <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/40">
+                      Convert legacy SQL into Snowflake-ready output with AI-powered
+                      transformation and built-in validation.
+                    </p>
 
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-3 max-w-[680px] text-base leading-relaxed text-gray-300 sm:text-lg"
-                >
-                  Set up a guided migration session to convert source SQL into
-                  Snowflake-ready output using the built-in AI-powered toolkit.
-                </motion.p>
+                    {/* Feature chips */}
+                    <div className="mt-6 flex flex-wrap items-center gap-2">
+                      {features.map((feat, i) => (
+                        <span key={feat.label} className="flex items-center">
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-white/35">
+                            <feat.icon className="h-3 w-3" />
+                            {feat.label}
+                          </span>
+                          {i < features.length - 1 && (
+                            <span className="mx-2 text-white/10">·</span>
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
 
-                {/* Feature cards */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-8 grid w-full grid-cols-1 gap-3 sm:grid-cols-3"
-                >
-                  {features.map((feat, i) => (
-                    <motion.div
-                      key={feat.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 22,
-                        delay: 0.3 + i * 0.08,
-                      }}
-                      className="group relative rounded-xl border border-white/[0.1] bg-white/[0.04] p-4 backdrop-blur-sm transition-all duration-300 hover:border-[#29B5E8]/40 hover:bg-white/[0.07]"
-                    >
-                      {/* Hover glow */}
-                      <div className="pointer-events-none absolute -inset-[1px] rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ boxShadow: "0 0 30px rgba(41,181,232,0.12), inset 0 0 20px rgba(41,181,232,0.05)" }} />
-                      <div className="relative z-10">
-                        <div className="mb-2.5 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#29B5E8]/15 text-[#29B5E8] transition-transform duration-200 group-hover:scale-110">
-                          <feat.icon className="h-4.5 w-4.5" />
+                  {/* Steps strip */}
+                  <div className="border-t border-white/[0.06] bg-white/[0.02] px-8 py-5">
+                    <div className="grid grid-cols-4 gap-3">
+                      {steps.map((step, i) => (
+                        <div key={step} className="flex flex-col items-center text-center gap-2">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-bold text-white/40">
+                            {i + 1}
+                          </span>
+                          <span className="text-[11px] leading-tight text-white/30">{step}</span>
                         </div>
-                        <p className="text-sm font-semibold text-white">{feat.label}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-white/40">{feat.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
+                      ))}
+                    </div>
+                  </div>
 
-                {/* Steps pills */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-7 flex flex-wrap items-center justify-center gap-2"
-                >
-                  {steps.map((step, i) => (
-                    <span
-                      key={step}
-                      className="flex items-center gap-1.5 rounded-full border border-[#29B5E8]/20 bg-[#29B5E8]/[0.06] px-3 py-1.5 text-xs font-medium text-[#29B5E8]/80 sm:text-sm"
+                  {/* CTA strip */}
+                  <div className="border-t border-white/[0.06] px-8 py-6">
+                    <Link
+                      href="/sessions"
+                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#29B5E8] py-3.5 text-sm font-bold text-[#0a1628] transition-colors duration-200 hover:bg-[#24a3d4]"
                     >
-                      <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#29B5E8]/20 text-[10px] font-bold text-[#29B5E8]">
-                        {i + 1}
+                      Start Migration Session
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                    <div className="mt-3 flex items-center justify-center gap-4 text-[11px] text-white/20">
+                      <span className="flex items-center gap-1">
+                        <Check className="h-3 w-3 text-emerald-400/40" />
+                        15+ source databases
                       </span>
-                      {step}
-                    </span>
-                  ))}
-                </motion.div>
-
-                {/* CTA */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-8"
-                >
-                  <Link
-                    href="/sessions"
-                    className="cta-pulse group inline-flex items-center gap-2.5 rounded-full bg-[#29B5E8] px-7 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(41,181,232,0.35)] transition-all duration-300 hover:gap-3 hover:bg-[#24a3d4] hover:shadow-[0_0_32px_rgba(41,181,232,0.5)]"
-                  >
-                    <Snowflake className="h-4.5 w-4.5" />
-                    Start Migration Session
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                </motion.div>
-
-                {/* Supported badge */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                  className="mt-6 flex items-center gap-2 text-xs text-white/30"
-                >
-                  <Check className="h-3.5 w-3.5 text-emerald-400/60" />
-                  15+ source databases supported
-                  <span className="mx-1 text-white/15">|</span>
-                  <Check className="h-3.5 w-3.5 text-emerald-400/60" />
-                  Enterprise-grade security
+                      <span className="flex items-center gap-1">
+                        <Check className="h-3 w-3 text-emerald-400/40" />
+                        Enterprise-grade security
+                      </span>
+                    </div>
+                  </div>
                 </motion.div>
               </div>
             </div>

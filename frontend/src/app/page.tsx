@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Header } from "@/components/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -10,12 +11,15 @@ import {
   Check,
   Database,
   Layers,
-  Snowflake,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Card data                                                          */
 /* ------------------------------------------------------------------ */
+
+function SnowflakeLogo({ className }: { className?: string; style?: React.CSSProperties }) {
+  return <Image src="/Snowflake.svg" alt="Snowflake" width={24} height={24} className={className} />;
+}
 
 interface MigrationCard {
   title: string;
@@ -32,7 +36,7 @@ interface MigrationCard {
 const migrationCards: MigrationCard[] = [
   {
     title: "Snowflake Migration",
-    icon: Snowflake,
+    icon: SnowflakeLogo,
     color: "#29B5E8",
     description:
       "Migrate and transform SQL scripts, stored procedures, and data pipelines into Snowflake-compatible syntax with automated validation.",

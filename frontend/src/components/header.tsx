@@ -17,9 +17,7 @@ export function Header({ showWorkbenchToggle = false }: HeaderProps) {
     <header className="flex h-[var(--header-h)] w-full shrink-0 items-center border-b border-white/10 bg-[#141414] px-4">
       <div className="flex items-center">
         <Image src="/EY.svg" alt="Ethan logo" width={28} height={28} className="h-7 w-7" priority />
-        <span className="ml-3 text-lg font-bold text-white">
-          ETHAN
-        </span>
+        <span className="translate-y-[6px] text-[19px] font-bold leading-none text-white">ETHAN</span>
       </div>
 
       <div className="ml-auto">

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useMeasure from "react-use-measure";
 import {
@@ -674,44 +675,41 @@ export const SetupWizard = React.memo(function SetupWizard({
   return (
     <MotionConfig transition={{ duration: 0.5, type: "spring", bounce: 0 }}>
       <div className="flex w-full items-center justify-center p-4">
-        <div className="wizard-glow wizard-top-border relative w-full max-w-2xl rounded-2xl border border-white/[0.12] bg-[#141414]/90 backdrop-blur-xl">
-          {/* Inner radial glow */}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(41,181,232,0.06) 0%, transparent 60%)" }} />
+        <div className="relative w-full max-w-2xl rounded-2xl border border-white/[0.12] bg-[#141414]/90 backdrop-blur-xl">
+
 
           <motion.div layout className="relative z-10">
             {/* Header */}
-            <div className="flex flex-row items-start justify-between px-6 pt-5 pb-4">
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#29B5E8]/15">
-                    <Snowflake className="h-3.5 w-3.5 text-[#29B5E8]" />
-                  </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#FFE600]">
-                    Snowflake Migration
-                  </span>
+            <div className="border-b border-white/[0.06] px-6 pt-5 pb-5">
+              {/* Branding + step dots row */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-white/40">
+                  <Image src="/Snowflake.svg" alt="Snowflake" width={16} height={16} className="h-4 w-4 opacity-70" />
+                  <span className="text-xs font-medium">Snowflake Migration</span>
                 </div>
-                <h2 className="text-xl font-semibold text-white">
-                  {currentStepInfo?.label ?? "Migration Setup"}
-                </h2>
-                <p className="text-sm text-white/40">
-                  {currentStepInfo?.description ?? ""}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  {visibleSteps.map((_, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "h-1.5 rounded-full transition-all duration-300",
+                        currentIndex === index
+                          ? "w-6 bg-[#29B5E8]"
+                          : index < currentIndex
+                            ? "w-1.5 bg-emerald-400/70"
+                            : "w-1.5 bg-white/20"
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 pt-1.5">
-                {visibleSteps.map((_, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "h-2 rounded-full transition-all duration-300",
-                      currentIndex === index
-                        ? "w-8 bg-[#29B5E8] shadow-[0_0_8px_rgba(41,181,232,0.5)]"
-                        : index < currentIndex
-                          ? "w-2.5 bg-emerald-400/70"
-                          : "w-2 bg-[#29B5E8]/20"
-                    )}
-                  />
-                ))}
-              </div>
+              {/* Step title + description */}
+              <h2 className="text-2xl font-bold text-white tracking-tight">
+                {currentStepInfo?.label ?? "Migration Setup"}
+              </h2>
+              <p className="mt-1 text-sm text-white/40 leading-relaxed">
+                {currentStepInfo?.description ?? ""}
+              </p>
             </div>
 
             {/* Content with animated height */}
@@ -759,7 +757,7 @@ export const SetupWizard = React.memo(function SetupWizard({
                 className={cn(
                   "flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition-all",
                   canProceed && !isBusy && !isStarting
-                    ? "bg-[#29B5E8] text-white shadow-[0_2px_20px_-3px_rgba(41,181,232,0.45)] hover:bg-[#24a3d4] hover:shadow-[0_2px_28px_-3px_rgba(41,181,232,0.6)]"
+                    ? "bg-[#29B5E8] text-[#0a1628] shadow-[0_1px_4px_rgba(0,0,0,0.25)] hover:bg-[#24a3d4] hover:shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                     : "cursor-not-allowed bg-white/5 text-white/20"
                 )}
               >
