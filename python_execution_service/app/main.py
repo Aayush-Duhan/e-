@@ -1,9 +1,16 @@
-﻿"""FastAPI application entrypoint."""
+"""FastAPI application entrypoint."""
 
 import logging
+import sys
+import pathlib
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
+# Ensure the parent workspace directory is in sys.path so that absolute imports work regardless of cwd
+workspace_root = pathlib.Path(__file__).resolve().parent.parent.parent
+if str(workspace_root) not in sys.path:
+    sys.path.insert(0, str(workspace_root))
 
 from python_execution_service.app.api.routes import register_routes
 from python_execution_service.domain.runs.service import load_persisted_runs

@@ -127,9 +127,11 @@ const TreeNodeRow = React.memo(function TreeNodeRow({
 }: TreeNodeRowProps) {
   const [expanded, setExpanded] = React.useState(depth === 0 || !!searchQuery);
 
-  React.useEffect(() => {
-    if (searchQuery) setExpanded(true);
-  }, [searchQuery]);
+  const prevSearchRef = React.useRef(searchQuery);
+  if (searchQuery && searchQuery !== prevSearchRef.current && !expanded) {
+    setExpanded(true);
+  }
+  prevSearchRef.current = searchQuery;
 
   const filePaths = React.useMemo(
     () => (node.isFolder ? getAllFilePaths(node) : []),
@@ -211,7 +213,10 @@ const TreeNodeRow = React.memo(function TreeNodeRow({
         {/* Chevron */}
         {node.isFolder ? (
           <span
+            role="button"
+            tabIndex={0}
             onClick={handleToggleFolder}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleToggleFolder(e as unknown as React.MouseEvent); } }}
             className="mr-1 flex h-4 w-4 shrink-0 items-center justify-center text-neutral-500 group-hover:text-neutral-300"
           >
             {expanded ? (
@@ -225,7 +230,7 @@ const TreeNodeRow = React.memo(function TreeNodeRow({
         )}
 
         {/* Checkbox */}
-        <span onClick={handleToggleSelection} className="mr-2 flex shrink-0 items-center">
+        <span role="button" tabIndex={0} onClick={handleToggleSelection} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleToggleSelection(e as unknown as React.MouseEvent); } }} className="mr-2 flex shrink-0 items-center">
           {(node.isFolder ? allChildrenSelected : isFileSelected) ? (
             <CheckSquare className="h-3.5 w-3.5 text-neutral-200" />
           ) : someChildrenSelected ? (

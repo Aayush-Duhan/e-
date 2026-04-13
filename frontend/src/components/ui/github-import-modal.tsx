@@ -55,6 +55,7 @@ interface GitHubImportModalProps {
   clearSelectionOnImport?: boolean;
 }
 
+// eslint-disable-next-line react-doctor/no-giant-component
 export function GitHubImportModal({
   mode,
   open,
@@ -175,12 +176,13 @@ export function GitHubImportModal({
               <div className="flex-1 space-y-5 overflow-y-auto p-5 scrollbar-dark">
                 {/* PAT input */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
+                  <label htmlFor="pat-input" className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
                     Personal Access Token
                   </label>
                   <div className="relative">
                     <KeyRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                     <input
+                      id="pat-input"
                       type={showToken ? "text" : "password"}
                       value={importState.token}
                       onChange={(event) => setToken(event.target.value)}
@@ -213,12 +215,13 @@ export function GitHubImportModal({
 
                 {/* Org input */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
+                  <label htmlFor="org-input" className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
                     Organization
                   </label>
                   <div className="relative">
                     <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                     <input
+                      id="org-input"
                       type="text"
                       value={importState.org}
                       onChange={(event) => setOrg(event.target.value)}
@@ -281,12 +284,13 @@ export function GitHubImportModal({
 
                 {/* Repository selector */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
+                  <label htmlFor="repo-input" className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
                     Repository
                   </label>
                   <div className="relative">
                     <FolderGit2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                       <input
+                        id="repo-input"
                         type="text"
                         value={importState.selectedRepositoryName}
                         onChange={(event) => setRepositoryName(event.target.value)}
@@ -305,12 +309,13 @@ export function GitHubImportModal({
                 {/* Branch selector — shown after tree is loaded */}
                 {showBranchSelector && (
                   <div className="space-y-2">
-                    <label className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
+                    <label htmlFor="branch-select" className="block text-xs font-medium uppercase tracking-wider text-neutral-400">
                       Branch
                     </label>
                     <div className="relative">
                       <GitBranch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                       <select
+                        id="branch-select"
                         value={importState.branch}
                         onChange={(event) => void changeBranchAndReload(event.target.value)}
                         disabled={importState.isLoadingTree}

@@ -9,7 +9,7 @@
 
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useStore } from '@nanostores/react';
-import { motion, type Variants } from 'framer-motion';
+import { m, type Variants } from 'framer-motion';
 import { XCircle, Terminal } from 'lucide-react';
 import { workbenchStore } from '@/lib/workbench-store';
 import { cubicEasingFn } from '@/lib/utils/easings';
@@ -76,14 +76,12 @@ export const Workbench = memo(({ chatStarted, isStreaming, runId }: WorkbenchPro
     workbenchStore.setShowWorkbench(false);
   }, []);
 
-  const fileCount = useMemo(() => {
-    return Object.keys(files).filter((key) => files[key]?.type === 'file').length;
-  }, [files]);
+  const fileCount = Object.keys(files).filter((key) => files[key]?.type === 'file').length;
 
   if (!chatStarted) return null;
 
   return (
-    <motion.div
+    <m.div
       initial="closed"
       animate={showWorkbench ? 'open' : 'closed'}
       variants={workbenchVariants}
@@ -135,7 +133,7 @@ export const Workbench = memo(({ chatStarted, isStreaming, runId }: WorkbenchPro
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 });
 

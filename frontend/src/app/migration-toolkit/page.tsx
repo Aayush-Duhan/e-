@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Snowflake, ArrowRight, ArrowLeft, Check, Zap, Shield, Code2 } from "lucide-react";
 import { Header } from "@/components/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -58,7 +58,7 @@ export default function MigrationToolkitPage() {
               {/* Content */}
               <div className="relative z-10 flex w-full max-w-2xl flex-col px-4">
                 {/* Back link */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -71,10 +71,10 @@ export default function MigrationToolkitPage() {
                     <ArrowLeft className="h-3.5 w-3.5" />
                     Back to Dashboard
                   </Link>
-                </motion.div>
+                </m.div>
 
                 {/* Panel */}
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
@@ -144,7 +144,7 @@ export default function MigrationToolkitPage() {
                       </span>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               </div>
             </div>
           </SidebarInset>

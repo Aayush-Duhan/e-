@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Header } from "@/components/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SessionSidebar } from "@/components/session-sidebar";
@@ -149,7 +149,7 @@ export default function DashboardPage() {
               <div className="relative z-[2] flex h-full w-full flex-col overflow-hidden px-4 py-4 sm:px-6 md:px-10">
                 <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col min-h-0">
                   {/* ── Section header ── */}
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -168,12 +168,12 @@ export default function DashboardPage() {
                       migrating SQL scripts, stored procedures, and data
                       pipelines across cloud data platforms.
                     </p>
-                  </motion.div>
+                  </m.div>
 
                   {/* ── 3-column card grid ── */}
                   <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 pb-2 md:grid-cols-3">
                     {migrationCards.map((card, i) => (
-                      <motion.div
+                      <m.div
                         key={card.title}
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -324,7 +324,7 @@ export default function DashboardPage() {
                             </div>
                           )}
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </div>
                 </div>

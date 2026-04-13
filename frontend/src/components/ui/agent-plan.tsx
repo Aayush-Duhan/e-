@@ -57,7 +57,9 @@ function statusBadgeClass(status: string): string {
   return "bg-white/5 text-white/65 border-white/10";
 }
 
-export default function AgentPlan({ tasks = [], readOnly = true, headerActions }: PlanProps) {
+const EMPTY_TASKS: Task[] = [];
+
+export default function AgentPlan({ tasks = EMPTY_TASKS, readOnly = true, headerActions }: PlanProps) {
   const [collapsed, setCollapsed] = React.useState(false);
 
   const workflow = tasks[0];

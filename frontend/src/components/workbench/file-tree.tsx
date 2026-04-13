@@ -49,8 +49,10 @@ function setsEqual(a: Set<string>, b: Set<string>) {
   return true;
 }
 
+const EMPTY_FILES: FileMap = {};
+
 export function FileTree({
-  files = {},
+  files = EMPTY_FILES,
   onFileSelect,
   selectedFile,
   rootFolder = "/",

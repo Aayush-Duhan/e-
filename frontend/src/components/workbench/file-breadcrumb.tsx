@@ -9,7 +9,7 @@
  */
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { AnimatePresence, motion, type Variants } from 'framer-motion';
+import { AnimatePresence, m, type Variants } from 'framer-motion';
 import { memo, useEffect, useRef, useState } from 'react';
 import { FileCode, ChevronRight } from 'lucide-react';
 import type { FileMap } from '@/lib/stores/files-store';
@@ -94,12 +94,20 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(
           const isActive = activeIndex === index;
 
           return (
-            <div key={index} className="relative flex items-center">
+            <div key={path || '/'} className="relative flex items-center">
               <DropdownMenu.Root open={isActive} modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <span
                     ref={(ref) => {
                       segmentRefs.current[index] = ref;
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSegmentClick(index);
+                      }
                     }}
                     className={cn(
                       'flex items-center gap-1.5 cursor-pointer shrink-0',
@@ -128,7 +136,7 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(
                         side="bottom"
                         avoidCollisions={false}
                       >
-                        <motion.div
+                        <m.div
                           ref={contextMenuRef}
                           initial="close"
                           animate="open"
@@ -151,7 +159,7 @@ export const FileBreadcrumb = memo<FileBreadcrumbProps>(
                               />
                             </div>
                           </div>
-                        </motion.div>
+                        </m.div>
                       </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                   )}

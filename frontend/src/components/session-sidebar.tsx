@@ -38,9 +38,11 @@ export function SessionSidebar({
 
   const hoverTimeoutRef = React.useRef<NodeJS.Timeout>(undefined);
 
-  React.useEffect(() => {
+  const prevPathnameRef = React.useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
     setSidebarOpen(false);
-  }, [pathname, setSidebarOpen]);
+  }
 
   const isDashboard = pathname === "/";
   const isSessionsPage = pathname === "/sessions" || pathname.startsWith("/sessions/");

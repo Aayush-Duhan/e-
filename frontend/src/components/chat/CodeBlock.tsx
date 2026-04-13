@@ -85,6 +85,7 @@ export const CodeBlock = memo(function CodeBlock({
           </button>
         )}
       </div>
+      {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: html ?? "" }} />
     </div>
   );

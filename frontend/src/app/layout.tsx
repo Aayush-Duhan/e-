@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
+import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "Autonomous Migration",
@@ -22,8 +23,15 @@ export default function RootLayout({
             strategy="beforeInteractive"
           />
         )}
+        <Script
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

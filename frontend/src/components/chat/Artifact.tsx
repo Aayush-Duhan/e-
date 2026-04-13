@@ -54,8 +54,10 @@ export const Artifact = memo(function Artifact({ messageId }: ArtifactProps) {
       {showActions && actionList.length > 0 && (
         <div className="border-t border-white/10 bg-black/20 px-5 py-4">
           <ul className="space-y-3">
-            {actionList.map((action, index) => (
-              <li key={`${messageId}-${index}`} className="text-sm text-white/80">
+            {actionList.map((action, index) => {
+              const uniqueKey = `${messageId}-${action.filePath ?? action.content ?? index}`;
+              return (
+                <li key={uniqueKey} className="text-sm text-white/80">
                 {action.type === "file" ? (
                   <div>
                     Create <code className="rounded bg-white/10 px-1.5 py-1 text-xs text-amber-100">{action.filePath}</code>
@@ -67,7 +69,8 @@ export const Artifact = memo(function Artifact({ messageId }: ArtifactProps) {
                   </div>
                 )}
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
       )}

@@ -19,6 +19,8 @@ import { useSnapScroll } from "@/hooks/useSnapScroll";
 
 const logger = createScopedLogger("ChatPanel");
 
+const EMPTY_UPLOADED_FILES: UploadedFile[] = [];
+
 interface ChatPanelProps {
   runId: string | null;
   projectId: string | null;
@@ -59,7 +61,7 @@ export function ChatPanel({
   isAgentThinking = false,
   streamingContent = null,
   isCanceling = false,
-  uploadedFiles = [],
+  uploadedFiles = EMPTY_UPLOADED_FILES,
   onCreateProject,
   onRetryRun,
   onPickDdlFile,
@@ -361,9 +363,9 @@ function ChatMessageArea({
           </div>
         ) : (
           <div ref={messageRef} className="space-y-3">
-            {messages.map((message, index) => (
+            {messages.map((message) => (
               <ChatBubble
-                key={`msg-${message.id}-${index}`}
+                key={message.id}
                 message={message}
               />
             ))}

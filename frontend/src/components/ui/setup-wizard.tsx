@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { AnimatePresence, motion, MotionConfig } from "framer-motion";
+import { AnimatePresence, m, MotionConfig } from "framer-motion";
 import useMeasure from "react-use-measure";
 import {
   ChevronLeft,
@@ -217,6 +217,8 @@ function FileDropZone({
 }) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       onDrop={(e) => {
         e.preventDefault();
         onDragLeave();
@@ -228,6 +230,7 @@ function FileDropZone({
       }}
       onDragLeave={onDragLeave}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       className={cn(
         "group cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200",
         isDragging
@@ -678,7 +681,7 @@ export const SetupWizard = React.memo(function SetupWizard({
         <div className="relative w-full max-w-2xl rounded-2xl border border-white/[0.12] bg-[#141414]/90 backdrop-blur-xl">
 
 
-          <motion.div layout className="relative z-10">
+          <m.div layout className="relative z-10">
             {/* Header */}
             <div className="border-b border-white/[0.06] px-6 pt-5 pb-5">
               {/* Branding + step dots row */}
@@ -688,9 +691,9 @@ export const SetupWizard = React.memo(function SetupWizard({
                   <span className="text-xs font-medium">Snowflake Migration</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  {visibleSteps.map((_, index) => (
+                  {visibleSteps.map((step, index) => (
                     <div
-                      key={index}
+                      key={step.id}
                       className={cn(
                         "h-1.5 rounded-full transition-all duration-300",
                         currentIndex === index
@@ -713,7 +716,7 @@ export const SetupWizard = React.memo(function SetupWizard({
             </div>
 
             {/* Content with animated height */}
-            <motion.div
+            <m.div
               animate={{ height: bounds.height > 0 ? bounds.height : "auto" }}
               className="relative overflow-hidden"
               transition={{ type: "spring", bounce: 0, duration: 0.5 }}
@@ -725,7 +728,7 @@ export const SetupWizard = React.memo(function SetupWizard({
                     initial={false}
                     custom={direction}
                   >
-                    <motion.div
+                    <m.div
                       key={currentStep}
                       variants={slideVariants}
                       initial="initial"
@@ -735,11 +738,11 @@ export const SetupWizard = React.memo(function SetupWizard({
                       className="w-full py-4"
                     >
                       <StepContent step={currentStep} />
-                    </motion.div>
+                    </m.div>
                   </AnimatePresence>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Footer */}
             <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-6 py-4 rounded-b-2xl">
@@ -774,7 +777,7 @@ export const SetupWizard = React.memo(function SetupWizard({
                 )}
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </MotionConfig>

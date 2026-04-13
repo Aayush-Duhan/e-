@@ -2,7 +2,7 @@
 
 import type { ComponentType, ReactNode } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ArrowRight, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ export function FeatureCard({
   accentColor = "from-blue-500/20 to-cyan-500/20",
 }: FeatureCardProps) {
   const inner = (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 30, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
@@ -59,7 +59,7 @@ export function FeatureCard({
         {comingSoon && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <div className="absolute inset-0 bg-[#0d0f14]/70 backdrop-blur-[3px]" />
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: delay + 0.3, duration: 0.4 }}
@@ -69,7 +69,7 @@ export function FeatureCard({
               <span className="text-xs font-medium tracking-wide text-white/50">
                 Coming Soon
               </span>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </div>
@@ -120,7 +120,7 @@ export function FeatureCard({
           </div>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 
   if (!comingSoon && href) {

@@ -12,12 +12,14 @@ import {
   indentUnit,
 } from "@codemirror/language";
 import { highlightSelectionMatches, searchKeymap } from "@codemirror/search";
+// eslint-disable-next-line prefer-dynamic-import
 import {
   Compartment,
   EditorSelection,
   EditorState,
   Transaction,
 } from "@codemirror/state";
+// eslint-disable-next-line prefer-dynamic-import
 import {
   crosshairCursor,
   drawSelection,
